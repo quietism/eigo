@@ -1,6 +1,7 @@
 package main
 
-import ("fmt"
+import (
+        "fmt"
         "net"
 	"bufio"
 )
@@ -15,7 +16,7 @@ type Client struct {
 func (client *Client) Read() {
      for {
 	line, _ := client.reader.ReadString('\n')
-     	client.incoming <- line
+	client.incoming <- line
      }
 }
 
@@ -72,8 +73,11 @@ func (chatRoom *ChatRoom) Listen() {
 			select {
 				case data := <- chatRoom.incoming:
 					chatRoom.Broadcast(data)
+					fmt.Print(data)
 				case conn := <- chatRoom.joins:
 					chatRoom.Join(conn)
+					chatRoom.Broadcast("Welcome to the chatroom!")
+					fmt.Println("New person joined!")
 			}
 		}		
 	}()
@@ -101,6 +105,5 @@ func main() {
 	for { 
 		conn, _ := listener.Accept()
 		chatRoom.joins <- conn
-		fmt.Println("a new client connected!")
 	}
 }
